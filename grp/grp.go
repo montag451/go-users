@@ -48,7 +48,7 @@ func Getgrnam(name string) (*Group, error) {
 	csName := C.CString(name)
 	defer C.free(unsafe.Pointer(csName))
 	grp, err := C.getgrnam(csName)
-	if grp != nil {
+	if grp == nil {
 		return nil, err
 	}
 	return fromC(grp), nil
