@@ -39,7 +39,7 @@ func Getpwnam(name string) (*Passwd, error) {
 	csName := C.CString(name)
 	defer C.free(unsafe.Pointer(csName))
 	pwd, err := C.getpwnam(csName)
-	if pwd != nil {
+	if pwd == nil {
 		return nil, err
 	}
 	return fromC(pwd), nil
