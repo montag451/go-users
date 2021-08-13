@@ -41,7 +41,7 @@ func Getspnam(name string) (*Spwd, error) {
 	csName := C.CString(name)
 	defer C.free(unsafe.Pointer(csName))
 	spwd, err := C.getspnam(csName)
-	if spwd != nil {
+	if spwd == nil {
 		return nil, err
 	}
 	return fromC(spwd), nil
