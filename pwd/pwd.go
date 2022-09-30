@@ -1,3 +1,7 @@
+// +build unix && !android && cgo
+
+// Package pwd provides some functions to query the passwd database of
+// a UNIX system.
 package pwd
 
 // #include <stdlib.h>
@@ -9,6 +13,7 @@ import (
 	"unsafe"
 )
 
+// Passwd represents a record in the passwd database.
 type Passwd struct {
 	Name   string
 	Passwd string
@@ -33,6 +38,9 @@ func fromC(pwd *C.struct_passwd) *Passwd {
 
 var mu sync.Mutex
 
+// Getpwnam looks up the passwd database and returns the record
+// matching the given user name. If no record is found, it returns
+// (nil, nil). It is the equivalent of the C function getpwnam.
 func Getpwnam(name string) (*Passwd, error) {
 	mu.Lock()
 	defer mu.Unlock()
@@ -45,6 +53,9 @@ func Getpwnam(name string) (*Passwd, error) {
 	return fromC(pwd), nil
 }
 
+// Getpwuid looks up the passwd database and returns the record
+// matching the given UID. If no record is found, it returns
+// (nil, nil). It is the equivalent of the C function getpwuid.
 func Getpwuid(uid int) (*Passwd, error) {
 	mu.Lock()
 	defer mu.Unlock()
@@ -55,6 +66,7 @@ func Getpwuid(uid int) (*Passwd, error) {
 	return fromC(pwd), nil
 }
 
+// Getpwall returns all the records in the passwd database.
 func Getpwall() ([]*Passwd, error) {
 	mu.Lock()
 	defer mu.Unlock()

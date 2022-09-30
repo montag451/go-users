@@ -1,3 +1,7 @@
+// +build unix && !android && cgo
+
+// Package spwd provides some functions to query the shadow database
+// of a UNIX system.
 package spwd
 
 // #include <stdlib.h>
@@ -9,6 +13,7 @@ import (
 	"unsafe"
 )
 
+// Spwd represents a record in the shadow database.
 type Spwd struct {
 	Namp   string
 	Pwdp   string
@@ -35,6 +40,9 @@ func fromC(spwd *C.struct_spwd) *Spwd {
 
 var mu sync.Mutex
 
+// Getspnam looks up the shadow database and returns the record
+// matching the given user name. If no record is found, it returns
+// (nil, nil). It is the equivalent of the C function getspnam.
 func Getspnam(name string) (*Spwd, error) {
 	mu.Lock()
 	defer mu.Unlock()
@@ -47,6 +55,7 @@ func Getspnam(name string) (*Spwd, error) {
 	return fromC(spwd), nil
 }
 
+// Getspall returns all the records in the shadow database.
 func Getspall() ([]*Spwd, error) {
 	mu.Lock()
 	defer mu.Unlock()

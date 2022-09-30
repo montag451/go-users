@@ -1,3 +1,7 @@
+// +build unix && !android && cgo
+
+// Package grp provides some functions to query the group database of
+// a UNIX system.
 package grp
 
 // #include <stdlib.h>
@@ -14,6 +18,7 @@ import (
 	"unsafe"
 )
 
+// Group represents a record in the group database.
 type Group struct {
 	Name   string
 	Passwd string
@@ -23,14 +28,12 @@ type Group struct {
 
 func fromC(grp *C.struct_group) *Group {
 	members := []string{}
-	i := 0
-	for {
+	for i := 0; ; i++ {
 		m := C.group_get_member(grp, C.int(i))
 		if m == nil {
 			break
 		}
 		members = append(members, C.GoString(m))
-		i++
 	}
 	return &Group{
 		Name:   C.GoString(grp.gr_name),
@@ -42,6 +45,9 @@ func fromC(grp *C.struct_group) *Group {
 
 var mu sync.Mutex
 
+// Getgrnam looks up the group database and returns the record
+// matching the given group name. If no record is found, it returns
+// (nil, nil). It is the equivalent of the C function getgrnam.
 func Getgrnam(name string) (*Group, error) {
 	mu.Lock()
 	defer mu.Unlock()
@@ -54,6 +60,9 @@ func Getgrnam(name string) (*Group, error) {
 	return fromC(grp), nil
 }
 
+// Getgrgid looks up the group database and returns the record
+// matching the given GID. If no record is found, it returns (nil,
+// nil). It is the equivalent of the C function getgrgid.
 func Getgrgid(gid int) (*Group, error) {
 	mu.Lock()
 	defer mu.Unlock()
@@ -64,6 +73,7 @@ func Getgrgid(gid int) (*Group, error) {
 	return fromC(grp), nil
 }
 
+// Getgrall returns all the records in the group database.
 func Getgrall() ([]*Group, error) {
 	mu.Lock()
 	defer mu.Unlock()
