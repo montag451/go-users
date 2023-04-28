@@ -7,11 +7,6 @@ package grp
 // #include <stdlib.h>
 // #include <sys/types.h>
 // #include <grp.h>
-//
-// static char* group_get_member(struct group *g, int i)
-// {
-//     return g->gr_mem[i];
-// }
 import "C"
 import (
 	"sync"
@@ -28,12 +23,10 @@ type Group struct {
 
 func fromC(grp *C.struct_group) *Group {
 	members := []string{}
-	for i := 0; ; i++ {
-		m := C.group_get_member(grp, C.int(i))
-		if m == nil {
-			break
-		}
-		members = append(members, C.GoString(m))
+	m := grp.gr_mem
+	for *m != nil {
+		members = append(members, C.GoString(*m))
+		m = (**C.char)(unsafe.Pointer(uintptr(unsafe.Pointer(m))+unsafe.Sizeof(*m)))
 	}
 	return &Group{
 		Name:   C.GoString(grp.gr_name),
