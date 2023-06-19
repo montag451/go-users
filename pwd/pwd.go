@@ -1,4 +1,5 @@
-// +build unix && !android && cgo
+//go:build !windows && !android && cgo
+// +build !windows,!android,cgo
 
 // Package pwd provides some functions to query the passwd database of
 // a UNIX system.

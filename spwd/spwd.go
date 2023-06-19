@@ -1,4 +1,5 @@
-// +build unix && !android && cgo
+//go:build !windows && !android && cgo
+// +build !windows,!android,cgo
 
 // Package spwd provides some functions to query the shadow database
 // of a UNIX system.

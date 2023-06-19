@@ -1,4 +1,5 @@
-// +build unix && !android && cgo
+//go:build !windows && !android && cgo
+// +build !windows,!android,cgo
 
 // Package grp provides some functions to query the group database of
 // a UNIX system.
