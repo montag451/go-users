@@ -27,7 +27,7 @@ func fromC(grp *C.struct_group) *Group {
 	m := grp.gr_mem
 	for *m != nil {
 		members = append(members, C.GoString(*m))
-		m = (**C.char)(unsafe.Pointer(uintptr(unsafe.Pointer(m))+unsafe.Sizeof(*m)))
+		m = (**C.char)(unsafe.Pointer(uintptr(unsafe.Pointer(m)) + unsafe.Sizeof(*m)))
 	}
 	return &Group{
 		Name:   C.GoString(grp.gr_name),
