@@ -61,7 +61,7 @@ func Getgrgid(gid int) (*Group, error) {
 	mu.Lock()
 	defer mu.Unlock()
 	grp, err := C.getgrgid(C.gid_t(gid))
-	if grp != nil {
+	if grp == nil {
 		return nil, err
 	}
 	return fromC(grp), nil
