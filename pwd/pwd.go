@@ -61,7 +61,7 @@ func Getpwuid(uid int) (*Passwd, error) {
 	mu.Lock()
 	defer mu.Unlock()
 	pwd, err := C.getpwuid(C.uid_t(uid))
-	if pwd != nil {
+	if pwd == nil {
 		return nil, err
 	}
 	return fromC(pwd), nil
